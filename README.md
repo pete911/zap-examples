@@ -1,6 +1,10 @@
 # zap-examples
 
-uber-go/zap logger examples
+uber-go/zap logger examples. Project contains "runnable" example of using zap logger in different components and
+also using context to enable "vertical" tracing by request id. The idea is that the logs can be searched "horizontally"
+by `component` logger field and also "vertically" by `request` field.
+
+The following is just a quick overview of zap logger and a few simple examples.
 
 ## override default config
 
