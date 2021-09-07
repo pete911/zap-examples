@@ -2,14 +2,19 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
-	"fmt"
+	"github.com/pete911/zap-examples/logger"
 	"go.uber.org/zap/zapcore"
+	"log"
 	"sync"
 )
 
 func main() {
-	logger, _ := NewZapConfig(zapcore.DebugLevel).Build()
+
+	logger, err := logger.NewZapConfig(zapcore.DebugLevel).Build()
+	if err != nil {
+		log.Fatalf("build zap logger: %v", err)
+	}
+
 	store := NewStore(logger)
 
 	serviceA := NewServiceA(logger, store)
@@ -24,21 +29,14 @@ func run(ctx context.Context, a ServiceA, b ServiceB) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			a.GetUser(context.WithValue(ctx, "request", generateRequestId()))
+			a.GetUser(ctx)
 		}()
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			b.GetUser(context.WithValue(ctx, "request", generateRequestId()))
+			b.GetUser(ctx)
 		}()
 	}
 	wg.Wait()
 }
 
-// --- helper functions ---
-
-func generateRequestId() string {
-	b := make([]byte, 8)
-	rand.Read(b)
-	return fmt.Sprintf("%X-%X", b[0:4], b[4:])
-}
