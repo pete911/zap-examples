@@ -1,4 +1,4 @@
-package logger
+package main
 
 import (
 	"context"
@@ -20,6 +20,7 @@ func NewZapConfig(level zapcore.Level) zap.Config {
 	config.EncoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	config.EncoderConfig.TimeKey = "timestamp"
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.EncoderConfig.FunctionKey = "fn"
 	config.Level.SetLevel(level)
 	return config
 }

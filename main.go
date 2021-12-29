@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/pete911/zap-examples/logger"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"log"
 	"sync"
@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	logger, err := logger.NewZapConfig(zapcore.DebugLevel).Build()
+	logger, err := NewZapConfig(zapcore.DebugLevel).Build()
 	if err != nil {
 		log.Fatalf("build zap logger: %v", err)
 	}
@@ -19,24 +19,27 @@ func main() {
 
 	serviceA := NewServiceA(logger, store)
 	serviceB := NewServiceB(logger, store)
-	run(context.Background(), serviceA, serviceB)
+	run(context.Background(), logger, serviceA, serviceB)
 }
 
-func run(ctx context.Context, a ServiceA, b ServiceB) {
+func run(ctx context.Context, logger *zap.Logger, a ServiceA, b ServiceB) {
 
 	var wg sync.WaitGroup
 	for i := 1; i <= 5; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			a.GetUser(ctx)
+			if err := a.GetUser(ctx); err != nil {
+				logger.Error("get user", zap.Error(err))
+			}
 		}()
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			b.GetUser(ctx)
+			if err := b.GetUser(ctx); err != nil {
+				logger.Error("get user", zap.Error(err))
+			}
 		}()
 	}
 	wg.Wait()
 }
-

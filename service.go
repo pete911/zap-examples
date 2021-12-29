@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/pete911/zap-examples/logger"
 	"go.uber.org/zap"
 )
 
@@ -24,24 +23,23 @@ func NewServiceA(logger *zap.Logger, store Store) ServiceA {
 
 func (s ServiceA) GetUser(ctx context.Context) error {
 
-	ctx = logger.GetRequestContext(ctx, "GetUser")
-	s.logger.Debug("get user", logger.GetLoggerFields(ctx)...)
+	ctx = GetRequestContext(ctx, "GetUser")
+	s.logger.Debug("get user", GetLoggerFields(ctx)...)
 
 	user, err := s.store.GetUser(ctx)
 	if err != nil {
-		s.logger.Error("get user", logger.GetLoggerFields(ctx, zap.Error(err))...)
+		s.logger.Error("get user", GetLoggerFields(ctx, zap.Error(err))...)
 		// hide internal log details and return only request id to the user, so we can track error by request
-		return fmt.Errorf("internal server error, request id: %s", logger.GetRequestContextId(ctx))
+		return fmt.Errorf("internal server error, request id: %s", GetRequestContextId(ctx))
 	}
 
-	s.logger.Debug(fmt.Sprintf("user %s", user), logger.GetLoggerFields(ctx)...)
+	s.logger.Debug(fmt.Sprintf("user %s", user), GetLoggerFields(ctx)...)
 	return nil
 }
 
 // --- service B ---
 
 type ServiceB struct {
-
 	logger *zap.Logger
 	store  Store
 }
@@ -56,16 +54,16 @@ func NewServiceB(logger *zap.Logger, store Store) ServiceB {
 
 func (s ServiceB) GetUser(ctx context.Context) error {
 
-	ctx = logger.GetRequestContext(ctx, "GetUser")
-	s.logger.Debug("get user", logger.GetLoggerFields(ctx)...)
+	ctx = GetRequestContext(ctx, "GetUser")
+	s.logger.Debug("get user", GetLoggerFields(ctx)...)
 
 	user, err := s.store.GetUser(ctx)
 	if err != nil {
-		s.logger.Error("get user", logger.GetLoggerFields(ctx, zap.Error(err))...)
+		s.logger.Error("get user", GetLoggerFields(ctx, zap.Error(err))...)
 		// hide internal log details and return only request id to the user, so we can track error by request
-		return fmt.Errorf("internal server error, request id: %s", logger.GetRequestContextId(ctx))
+		return fmt.Errorf("internal server error, request id: %s", GetRequestContextId(ctx))
 	}
 
-	s.logger.Debug(fmt.Sprintf("user %s", user), logger.GetLoggerFields(ctx)...)
+	s.logger.Debug(fmt.Sprintf("user %s", user), GetLoggerFields(ctx)...)
 	return nil
 }

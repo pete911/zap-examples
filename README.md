@@ -9,7 +9,8 @@ The following is just a quick overview of zap logger and a few simple examples.
 ## override default config
 
 Example of overriding default config, if you are fine with default, just use `logger, _ := zap.NewProduction()` to
-instantiate logger.
+instantiate logger. Config has additional settings e.g. `config.EncoderConfig.FunctionKey = "fn"` which adds `fn` field
+with caller function name value.
 
 ```go
 func NewZapConfig(level zapcore.Level) zap.Config {
@@ -22,6 +23,9 @@ func NewZapConfig(level zapcore.Level) zap.Config {
     return config
 }
 ```
+
+We can also skip caller multiple levels `log = log.WithOptions(zap.AddCallerSkip(1))`. This is useful if we have
+centralized logging e.g. in the interceptor.
 
 ## examples
 

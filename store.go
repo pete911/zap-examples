@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/pete911/zap-examples/logger"
 	"go.uber.org/zap"
 	"math/rand"
 	"time"
@@ -26,13 +25,13 @@ func NewStore(logger *zap.Logger) Store {
 func (s Store) GetUser(ctx context.Context) (User, error) {
 
 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(200)))
-	s.logger.Debug("get user", logger.GetLoggerFields(ctx)...)
+	s.logger.Debug("get user", GetLoggerFields(ctx)...)
 	user := User{
 		Id:       generateId(),
 		Username: generateUsername(),
 		Password: "super-secret",
 	}
-	s.logger.Debug(fmt.Sprintf("user %s found", user), logger.GetLoggerFields(ctx)...)
+	s.logger.Debug(fmt.Sprintf("user %s found", user), GetLoggerFields(ctx)...)
 	return user, nil
 }
 
